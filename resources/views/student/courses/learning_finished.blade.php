@@ -22,11 +22,17 @@
                 </div>
                 <div class="flex gap-3 items-center">
                     <div class="flex flex-col text-right">
-                        <p class="text-sm text-[#7F8190]">Howdy</p>
                         <p class="font-semibold">{{ Auth::user()->name }}</p>
+                        <p class="text-sm text-[#7F8190]">{{ Auth::user()->email }}</p>
                     </div>
                     <div class="w-[46px] h-[46px]">
-                        <img src="{{asset('images/photos/default-photo.svg')}}" alt="photo">
+                        <a href="/dashboard">
+                            @if (Auth::user()->avatar)
+                                <img src="{{ Storage::url(Auth::user()->avatar) }}" class="rounded-full" alt="photo">
+                            @else
+                                <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
+                            @endif
+                        </a>
                     </div>
                 </div>
             </div>

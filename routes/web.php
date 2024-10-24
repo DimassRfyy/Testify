@@ -68,6 +68,14 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:student')
         ->name('learning.index');
 
+        Route::get('/learning/join', [LearningController::class, 'join_course'])
+        ->middleware('role:student')
+        ->name('learning.join_course');
+
+        Route::post('/learning/join/save', [LearningController::class, 'store'])
+        ->middleware('role:student')
+        ->name('learning.join_course.store');
+
         Route::get('/learning/{course}/{question}', [LearningController::class, 'learning'])
         ->middleware('role:student')
         ->name('learning.course');

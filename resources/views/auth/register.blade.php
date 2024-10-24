@@ -34,7 +34,7 @@
         </nav>
         <div class="left-side min-h-screen flex flex-col w-full pb-[30px] pt-[82px]">
             <div class="h-full w-full flex items-center justify-center">
-                <form method="POST" action="{{ route('register') }}" class="flex flex-col gap-[30px] w-[450px] shrink-0">
+                <form method="POST" enctype="multipart/form-data" action="{{ route('register') }}" class="flex flex-col gap-[30px] w-[450px] shrink-0">
                     @csrf
                     <h1 class="font-bold text-2xl leading-9">Sign Up</h1>
                     <div class="flex flex-col gap-2">
@@ -44,6 +44,15 @@
                                 <img src="{{asset('images/icons/profile.svg')}}" class="h-full w-full object-contain" alt="icon">
                             </div>
                             <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Write your correct input here" name="name">
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <p class="font-semibold">Avatar</p>
+                        <div class="flex items-center w-full h-[52px] p-[14px_16px] rounded-full border border-[#EEEEEE] focus-within:border-2 focus-within:border-[#0A090B]">
+                            <div class="mr-[14px] w-6 h-6 flex items-center justify-center overflow-hidden">
+                                <img src="{{asset('images/icons/profile.svg')}}" class="h-full w-full object-contain" alt="icon">
+                            </div>
+                            <input type="file" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" name="avatar">
                         </div>
                     </div>
                     <div class="flex flex-col gap-2">

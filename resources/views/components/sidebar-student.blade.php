@@ -1,7 +1,7 @@
 <div>
     <div id="sidebar" class="w-[270px] flex flex-col shrink-0 min-h-screen justify-between p-[30px] border-r border-[#EEEEEE] bg-[#FBFBFB]">
         <div class="w-full flex flex-col gap-[30px]">
-            <a href="/dashboard/courses" class="flex items-center justify-center">
+            <a href="{{ route('dashboard.learning.index') }}" class="flex items-center justify-center">
                 <img src="{{asset('/images/logo/logonew.png')}}" alt="logo">
             </a>
             <ul class="flex flex-col gap-3">
@@ -18,8 +18,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('dashboard.courses.index') }}" 
-                       class="p-[10px_16px] flex items-center gap-[14px] rounded-full h-11 transition-all duration-200 {{ Route::is('dashboard.courses.*') ? 'bg-[#6436F1] text-white' : '' }} hover:text-white hover:bg-[#6436F1]">
+                    <a href="{{ route('dashboard.learning.index') }}" 
+                       class="p-[10px_16px] flex items-center gap-[14px] rounded-full h-11 transition-all duration-200 {{ Route::is('dashboard.learning.*') ? 'bg-[#6436F1] text-white' : '' }} hover:text-white hover:bg-[#6436F1]">
                         <div>
                             <img src="{{ asset('/images/icons/home-hashtag.svg') }}" alt="icon">
                         </div>

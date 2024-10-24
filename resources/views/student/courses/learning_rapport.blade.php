@@ -11,34 +11,7 @@
     <section id="content" class="flex">
         <x-sidebar-student />
         <div id="menu-content" class="flex flex-col w-full pb-[30px]">
-            <div class="nav flex justify-between p-5 border-b border-[#EEEEEE]">
-                <form class="search flex items-center w-[400px] h-[52px] p-[10px_16px] rounded-full border border-[#EEEEEE]">
-                    <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Search by report, student, etc" name="search">
-                    <button type="submit" class="ml-[10px] w-8 h-8 flex items-center justify-center">
-                        <img src="{{asset('images/icons/search.svg')}}" alt="icon">
-                    </button>
-                </form>
-                <div class="flex items-center gap-[30px]">
-                    <div class="flex gap-[14px]">
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('images/icons/receipt-text.svg')}}" alt="icon">
-                        </a>
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('images/icons/notification.svg')}}" alt="icon">
-                        </a>
-                    </div>
-                    <div class="h-[46px] w-[1px] flex shrink-0 border border-[#EEEEEE]"></div>
-                    <div class="flex gap-3 items-center">
-                        <div class="flex flex-col text-right">
-                            <p class="font-semibold">{{ Auth::user()->name }}</p>
-                            <p class="text-sm text-[#7F8190]">{{ Auth::user()->email }}</p>
-                        </div>
-                        <div class="w-[46px] h-[46px]">
-                            <img src="{{asset('images/photos/default-photo.svg')}}" alt="photo">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-topbar />
             <div class="flex flex-col gap-10 px-5 mt-5">
                 <div class="breadcrumb flex items-center gap-[30px]">
                     <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Home</a>
@@ -69,9 +42,15 @@
                 <div class="flex items-center">
 
                     @if($passed)
-                      <p class="p-[16px_20px] rounded-[10px] bg-[#06BC65] font-bold text-lg text-white outline-[#06BC65] outline-dashed outline-[3px] outline-offset-[7px] mr-[10px]">Passed</p>  
+                    <div class="flex flex-col gap-4">
+                        <p class="p-[16px_20px] rounded-[10px] bg-[#06BC65] font-bold text-lg text-white outline-[#06BC65] outline-dashed outline-[3px] outline-offset-[7px] mr-[10px]">Passed</p>  
+                        <p class="text-sm font-semibold text-gray-700">Nilai: {{ number_format($score, 2) }} / 100</p>
+                    </div>
                     @else
+                    <div class="flex flex-col gap-4">
                         <p class="p-[16px_20px] rounded-[10px] bg-[#FD445E] font-bold text-lg text-white outline-[#FD445E] outline-dashed outline-[3px] outline-offset-[7px] mr-[10px]">Not Passed</p>
+                        <p class="text-sm font-semibold text-gray-700">Nilai: {{ number_format($score, 2) }} / 100</p>
+                    </div>
                     @endif               
                     
 

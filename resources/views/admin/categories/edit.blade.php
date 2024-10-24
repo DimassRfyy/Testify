@@ -18,11 +18,11 @@
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
                     <a href="{{ url()->previous() }}" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Category</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold ">New Category</a>
+                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold ">Edit Category</a>
                 </div>
             </div>
             <div class="header flex flex-col gap-1 px-5 mt-5">
-                <h1 class="font-extrabold text-[30px] leading-[45px]">New Category</h1>
+                <h1 class="font-extrabold text-[30px] leading-[45px]">Edit Category</h1>
                 <p class="text-[#7F8190]">Provide high quality for best students</p>
             </div>
 
@@ -30,7 +30,7 @@
                 @if($errors->any)
                     <ul>
                         @foreach ($errors->all() as $error )
-                            <li class="py-5 px-5 bg-red-700 text-red">
+                            <li class="py-5 px-5 bg-red-700 text-white">
                                 {{ $error }}
                             </li>
                         @endforeach
@@ -39,18 +39,20 @@
             {{-- Pesan Gagal --}}
 
             {{-- Form Product --}}
-            <form method="POST" enctype="multipart/form-data" action="{{ route('dashboard.categories.store') }}" class="flex flex-col gap-[30px] w-[500px] mx-[70px] mt-10">
+            <form method="POST" enctype="multipart/form-data" action="{{ route('dashboard.categories.update', $category) }}" class="flex flex-col gap-[30px] w-[500px] mx-[70px] mt-10">
                 @csrf
+                @method('PUT')
+                
                 <div class="flex flex-col gap-[10px]">
                     <p class="font-semibold">Category Name</p>
                     <div class="flex items-center w-[500px] h-[52px] p-[14px_16px] rounded-full border border-[#EEEEEE] transition-all duration-300 focus-within:border-2 focus-within:border-[#0A090B]">
                         <div class="mr-[14px] w-6 h-6 flex items-center justify-center overflow-hidden">
                             <img src="{{asset('/images/icons/note-favorite-outline.svg')}}" class="w-full h-full object-contain" alt="icon">
                         </div>
-                        <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Write your better categories name" name="name" required>
+                        <input value="{{ $category->name }}" type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Write your better category name" name="name" required>
                     </div>
                 </div>
-             
+               
                 <label class="font-semibold flex items-center gap-[10px]"
                     ><input
                     type="radio"
@@ -61,7 +63,7 @@
                 </label>
                 <div class="flex items-center gap-5">
                     <a href="" class="w-full h-[52px] p-[14px_20px] bg-[#0A090B] rounded-full font-semibold text-white transition-all duration-300 text-center">Add to Draft</a>
-                    <button type="submit" class="w-full h-[52px] p-[14px_20px] bg-[#6436F1] rounded-full font-bold text-white transition-all duration-300 hover:shadow-[0_4px_15px_0_#6436F14D] text-center">Save Categories</button>
+                    <button type="submit" class="w-full h-[52px] p-[14px_20px] bg-[#6436F1] rounded-full font-bold text-white transition-all duration-300 hover:shadow-[0_4px_15px_0_#6436F14D] text-center">Save Category</button>
                 </div>
             </form>
             {{-- Form Product --}}

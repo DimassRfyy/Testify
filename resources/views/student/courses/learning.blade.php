@@ -26,16 +26,36 @@
                         <p class="text-sm text-[#7F8190]">{{ Auth::user()->email }}</p>
                     </div>
                     <div class="w-[46px] h-[46px]">
-                        <img src="{{asset('images/photos/default-photo.svg')}}" alt="photo">
+                        <a href="/dashboard">
+                            @if (Auth::user()->avatar)
+                                <img src="{{ Storage::url(Auth::user()->avatar) }}" class="rounded-full" alt="photo">
+                            @else
+                                <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
+                            @endif
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         <form action="{{ route('dashboard.learning.course.answer.store', ['course' => $course->id, 'question' => $question->id]) }}" method="POST" class="learning flex flex-col gap-[50px] items-center mt-[50px] w-full pb-[30px]">
             @csrf
-            <h1 class="w-[821px] font-extrabold text-[46px] leading-[69px] text-center">
-               {{ $question->question }}
-            </h1>
+           @if ($question->questionImage)
+           <div class="flex gap-5 w-[1100px] items-center">
+                
+            <div class="w-[470px] h-[330px] flex shrink-0 overflow-hidden">
+                <img src="{{ Storage::url($question->questionImage) }}" class="w-full h-full object-contain"
+                    alt="banner">
+            </div>
+            <div class="flex">
+                <h1 class="font-bold text-xl"> {{ $question->question }}</h1>
+            </div>
+            </div>
+           @else
+           <h1 class="w-[821px] font-extrabold text-[46px] leading-[69px] text-center">
+            {{ $question->question }}
+         </h1>
+           @endif
+           
             <div class="flex flex-col gap-[30px] max-w-[750px] w-full">
 
                 @foreach ($question->answers as $answer)                

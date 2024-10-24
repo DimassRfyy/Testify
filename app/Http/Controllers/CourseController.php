@@ -43,38 +43,43 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $validated =$request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|integer',
             'cover' => 'required|image|mimes:png,jpg,jpeg,svg',
-        ]);
-
+            'course_code' => 'nullable|string|unique:courses,course_code',
+        ],
+        [
+            'course_code.unique' => 'Kode course sudah digunakan!',
+        ]
+    );
+    
         DB::beginTransaction();
-
+    
         try {
+
             if ($request->hasFile('cover')) {
-                $coverPath = $request->file('cover')->store('product_cover','public');
+                $coverPath = $request->file('cover')->store('product_cover', 'public');
                 $validated['cover'] = $coverPath;
             }
+           
             $validated['slug'] = Str::slug($request->name);
+     
             $newCourse = Course::create($validated);
-
+    
             DB::commit();
-
+    
             return redirect()->route('dashboard.courses.index');
-        }
-
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             $error = ValidationException::withMessages([
-                'system_error' => ['System error!'. $e->getMessage()]
-            ]); 
-
+                'system_error' => ['System error! ' . $e->getMessage()],
+            ]);
+    
             throw $error;
         }
-
     }
+    
 
     /**
      * Display the specified resource.
@@ -114,6 +119,10 @@ class CourseController extends Controller
             'name' => 'required|string|max:255',
             'category_id' => 'required|integer',
             'cover' => 'sometimes|image|mimes:png,jpg,jpeg,svg',
+            'course_code' => 'nullable|string|unique:courses,course_code',
+        ],
+        [
+            'course_code.unique' => 'Kode course sudah digunakan!',
         ]);
 
         DB::beginTransaction();

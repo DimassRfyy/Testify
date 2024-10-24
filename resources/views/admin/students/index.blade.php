@@ -11,39 +11,12 @@
     <section id="content" class="flex">
         <x-sidebar />
         <div id="menu-content" class="flex flex-col w-full pb-[30px]">
-            <div class="nav flex justify-between p-5 border-b border-[#EEEEEE]">
-                <form class="search flex items-center w-[400px] h-[52px] p-[10px_16px] rounded-full border border-[#EEEEEE]">
-                    <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Search by report, student, etc" name="search">
-                    <button type="submit" class="ml-[10px] w-8 h-8 flex items-center justify-center">
-                        <img src="{{asset('images/icons/search.svg')}}" alt="icon">
-                    </button>
-                </form>
-                <div class="flex items-center gap-[30px]">
-                    <div class="flex gap-[14px]">
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('images/icons/receipt-text.svg')}}" alt="icon">
-                        </a>
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('images/icons/notification.svg')}}" alt="icon">
-                        </a>
-                    </div>
-                    <div class="h-[46px] w-[1px] flex shrink-0 border border-[#EEEEEE]"></div>
-                    <div class="flex gap-3 items-center">
-                        <div class="flex flex-col text-right">
-                            <p class="font-semibold">{{ Auth::user()->name }}</p>
-                            <p class="text-sm text-[#7F8190]">{{ Auth::user()->email }}</p>
-                        </div>
-                        <div class="w-[46px] h-[46px]">
-                            <img src="{{asset('images/photos/default-photo.svg')}}" alt="photo">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-topbar />
             <div class="flex flex-col gap-10 px-5 mt-5">
                 <div class="breadcrumb flex items-center gap-[30px]">
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Home</a>
+                    <a href="{{ url()->previous() }}" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Home</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="index.html" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
+                    <a href="{{ url()->previous() }}" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
                     <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold ">Course Students</a>
                 </div>
@@ -84,7 +57,11 @@
                      <div class="student-card w-full flex items-center justify-between p-4 border border-[#EEEEEE] rounded-[20px]">
                         <div class="flex gap-4 items-center">
                             <div class="w-[50px] h-[50px] flex shrink-0 rounded-full overflow-hidden">
-                                <img src="{{asset('images/photos/default-photo.svg')}}" class="w-full h-full object-cover" alt="photo">
+                                @if ($student->avatar)
+                                <img src="{{ Storage::url($student->avatar) }}" class="w-full h-full object-cover" alt="photo">
+                                    @else
+                                    <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
+                                @endif
                             </div>
                             <div class="flex flex-col gap-[2px]">
                                 <p class="font-bold text-lg">{{ $student->name }}</p>
@@ -93,19 +70,22 @@
                         </div>
 
                         @if($student->status == 'Lulus')
-                            <div class="flex items-center gap-[14px]">
-                                <p class="p-[6px_10px] rounded-[10px] bg-[#06BC65] font-bold text-xs text-white outline-[#06BC65] outline-dashed outline-[2px] outline-offset-[4px] mr-[6px]">Lulus</p>
-                            </div> 
-                        @elseif($student->status == 'Belum Memulai')
-                            <div class="flex items-center gap-[14px]">
-                                <p class="p-[6px_10px] rounded-[10px] bg-indigo-950 font-bold text-xs text-white outline-indigo-950 outline-dashed outline-[2px] outline-offset-[4px] mr-[6px]">Belum Memulai</p>
-                            </div> 
-                        @elseif($student->status == 'Belum Lulus')
-                            <div class="flex items-center gap-[14px]">
-                                <p class="p-[6px_10px] rounded-[10px] bg-[#FD445E] font-bold text-xs text-white outline-[#FD445E] outline-dashed outline-[2px] outline-offset-[4px] mr-[6px]">Belum Lulus</p>
-                            </div> 
-
-                        @endif
+                        <div class="flex items-center gap-[14px]">
+                            <p class="text-sm font-semibold text-gray-700">Nilai: {{ number_format($student->score, 2) }} / 100</p>
+                            <p class="p-[6px_10px] rounded-[10px] bg-[#06BC65] font-bold text-xs text-white outline-[#06BC65] outline-dashed outline-[2px] outline-offset-[4px] mr-[6px]">Lulus</p>
+                        </div> 
+                    @elseif($student->status == 'Belum Memulai')
+                        <div class="flex items-center gap-[14px]">
+                            <p class="text-sm font-semibold text-gray-700">Nilai: 0 / 100</p>
+                            <p class="p-[6px_10px] rounded-[10px] bg-indigo-950 font-bold text-xs text-white outline-indigo-950 outline-dashed outline-[2px] outline-offset-[4px] mr-[6px]">Belum Memulai</p>
+                        </div> 
+                    @elseif($student->status == 'Belum Lulus')
+                        <div class="flex items-center gap-[14px]">
+                            <p class="text-sm font-semibold text-gray-700">Nilai: {{ number_format($student->score, 2) }} / 100</p>
+                            <p class="p-[6px_10px] rounded-[10px] bg-[#FD445E] font-bold text-xs text-white outline-[#FD445E] outline-dashed outline-[2px] outline-offset-[4px] mr-[6px]">Belum Lulus</p>
+                        </div> 
+                    @endif
+                    
 
                         
 

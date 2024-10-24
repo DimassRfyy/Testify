@@ -11,34 +11,7 @@
     <section id="content" class="flex">
         <x-sidebar />
         <div id="menu-content" class="flex flex-col w-full pb-[30px]">
-            <div class="nav flex justify-between p-5 border-b border-[#EEEEEE]">
-                <form class="search flex items-center w-[400px] h-[52px] p-[10px_16px] rounded-full border border-[#EEEEEE]">
-                    <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Search by report, student, etc" name="search">
-                    <button type="submit" class="ml-[10px] w-8 h-8 flex items-center justify-center">
-                        <img src="{{asset('images/icons/search.svg')}}" alt="icon">
-                    </button>
-                </form>
-                <div class="flex items-center gap-[30px]">
-                    <div class="flex gap-[14px]">
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('images/icons/receipt-text.svg')}}" alt="icon">
-                        </a>
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('images/icons/notification.svg')}}" alt="icon">
-                        </a>
-                    </div>
-                    <div class="h-[46px] w-[1px] flex shrink-0 border border-[#EEEEEE]"></div>
-                    <div class="flex gap-3 items-center">
-                        <div class="flex flex-col text-right">
-                            <p class="font-semibold">{{ Auth::user()->name }}</p>
-                            <p class="text-sm text-[#7F8190]">{{ Auth::user()->email }}</p>
-                        </div>
-                        <div class="w-[46px] h-[46px]">
-                            <img src="{{asset('images/photos/default-photo.svg')}}" alt="photo">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-topbar />
             <div class="flex flex-col gap-10 px-5 mt-5">
                 <div class="breadcrumb flex items-center gap-[30px]">
                     <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Home</a>
@@ -83,19 +56,21 @@
                             </div>
                             <span class="font-semibold text-sm">Add Students</span>
                         </a>
-                        <a href="" class="flex gap-[10px] items-center">
+                        <a href="{{ route('dashboard.courses.edit', $course) }}" class="flex gap-[10px] items-center">
                             <div class="w-5 h-5">
                                 <img src="{{asset('images/icons/note-favorite-outline.svg')}}" alt="icon">
                             </div>
                             <span class="font-semibold text-sm">Edit Course Details</span>
                         </a>
-                        <a href="" class="flex gap-[10px] items-center">
+                        <a href="{{ route('dashboard.course.course_students.index', $course) }}" class="flex gap-[10px] items-center">
                             <div class="w-5 h-5">
                                 <img src="{{asset('images/icons/crown-outline.svg')}}" alt="icon">
                             </div>
-                            <span class="font-semibold text-sm">Upload Certificate</span>
+                            <span class="font-semibold text-sm">All Students</span>
                         </a>
-                        <a href="" class="flex gap-[10px] items-center text-[#FD445E]">
+                        <form  method="POST" action="{{ route('dashboard.courses.destroy', $course) }}"  class="flex gap-[10px] items-center text-[#FD445E]">
+                                 @csrf
+                                @method('DELETE')
                             <div class="w-5 h-5">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M17.5 4.98332C14.725 4.70832 11.9333 4.56665 9.15 4.56665C7.5 4.56665 5.85 4.64998 4.2 4.81665L2.5 4.98332" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -105,8 +80,10 @@
                                     <path d="M7.91675 10.4166H12.0834" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </div>
-                            <span class="font-semibold text-sm">Delete Course</span>
-                        </a>
+                            <button type="submit" class="flex items-center justify-between font-bold text-sm w-full text-[#FD445E]">
+                                <span class="font-semibold text-sm">Delete Course</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

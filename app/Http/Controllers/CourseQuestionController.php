@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CourseQuestion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class CourseQuestionController extends Controller
@@ -37,44 +38,52 @@ class CourseQuestionController extends Controller
      */
     public function store(Request $request, Course $course)
     {
-        //
-         $validated = $request->validate([
+        $validated = $request->validate([
             'question' => 'required|string|max:255',
             'answers' => 'required|array',
             'answers.*' => 'required|string',
-            'correct_answer' => 'required|integer'
+            'correct_answer' => 'required|integer',
+            'questionImage' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp', 
         ]);
-
+    
         DB::beginTransaction();
-
+    
         try {
-           
+            
+            if ($request->hasFile('questionImage')) {
+                $imagePath = $request->file('questionImage')->store('question_images', 'public');
+                $validated['questionImage'] = $imagePath;
+            }
+    
+            // Buat pertanyaan baru di tabel course_questions
             $question = $course->questions()->create([
                 'question' => $request->question,
+                'questionImage' => $validated['questionImage'] ?? null, // Menyimpan path image jika ada
             ]);
-
-              foreach ($request->answers as $index => $answerText) {
+    
+            // Simpan jawaban dan tanda correct answer
+            foreach ($request->answers as $index => $answerText) {
                 $isCorrect = ($request->correct_answer == $index);
                 $question->answers()->create([
                     'answer' => $answerText,
                     'is_correct' => $isCorrect
                 ]);
             }
-
+    
             DB::commit();
-
+    
             return redirect()->route('dashboard.courses.show', $course->id);
-        }
-
-        catch(\Exception $e){
+    
+        } catch (\Exception $e) {
             DB::rollBack();
             $error = ValidationException::withMessages([
-                'system_error' => ['System error!'. $e->getMessage()]
-            ]); 
-
+                'system_error' => ['System error! ' . $e->getMessage()]
+            ]);
+    
             throw $error;
         }
     }
+    
 
     /**
      * Display the specified resource.
@@ -103,47 +112,63 @@ class CourseQuestionController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, CourseQuestion $courseQuestion)
-    {
-        //
-            $validated = $request->validate([
-            'question' => 'required|string|max:255',
-            'answers' => 'required|array',
-            'answers.*' => 'required|string',
-            'correct_answer' => 'required|integer'
-        ]);
+{
+    $validated = $request->validate([
+        'question' => 'required|string|max:255',
+        'answers' => 'required|array',
+        'answers.*' => 'required|string',
+        'correct_answer' => 'required|integer',
+        'questionImage' => 'sometimes|nullable|image|mimes:png,jpg,jpeg,svg,webp', 
+    ]);
 
-        DB::beginTransaction();
+    DB::beginTransaction();
 
-        try {
-           
-            $courseQuestion->update([
-                'question' => $request->question,
-            ]);
-
-            $courseQuestion->answers()->delete();
-
-              foreach ($request->answers as $index => $answerText) {
-                $isCorrect = ($request->correct_answer == $index);
-                $courseQuestion->answers()->create([
-                    'answer' => $answerText,
-                    'is_correct' => $isCorrect
-                ]);
+    try {
+        // Jika ada file gambar yang diupload, simpan file baru dan hapus gambar lama jika ada
+        if ($request->hasFile('questionImage')) {
+            // Hapus gambar lama jika ada
+            if ($courseQuestion->questionImage) {
+                Storage::delete('public/' . $courseQuestion->questionImage);
             }
 
-            DB::commit();
-
-            return redirect()->route('dashboard.courses.show', $courseQuestion->course_id);
+            // Simpan gambar baru
+            $imagePath = $request->file('questionImage')->store('question_images', 'public');
+            $validated['questionImage'] = $imagePath;
         }
 
-        catch(\Exception $e){
-            DB::rollBack();
-            $error = ValidationException::withMessages([
-                'system_error' => ['System error!'. $e->getMessage()]
-            ]); 
+        // Perbarui pertanyaan dan gambar (jika ada)
+        $courseQuestion->update([
+            'question' => $validated['question'],
+            'questionImage' => $validated['questionImage'] ?? $courseQuestion->questionImage, // Simpan gambar jika ada, atau gunakan gambar lama
+        ]);
 
-            throw $error;
+        // Hapus semua jawaban lama
+        $courseQuestion->answers()->delete();
+
+        // Simpan jawaban baru dengan tanda correct answer
+        foreach ($request->answers as $index => $answerText) {
+            $isCorrect = ($request->correct_answer == $index);
+            $courseQuestion->answers()->create([
+                'answer' => $answerText,
+                'is_correct' => $isCorrect
+            ]);
         }
+
+        DB::commit();
+
+        // Redirect setelah update berhasil
+        return redirect()->route('dashboard.courses.show', $courseQuestion->course_id);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        $error = ValidationException::withMessages([
+            'system_error' => ['System error! ' . $e->getMessage()]
+        ]);
+
+        throw $error;
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

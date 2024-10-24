@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\StudentAnswer;
 use App\Models\CourseQuestion;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class LearningController extends Controller
 {
@@ -48,6 +50,57 @@ class LearningController extends Controller
         ]);
     }
 
+    public function join_course () {
+        return view('student.join_course');
+    }
+
+    public function store(Request $request)
+{
+    // Validasi inputan course code
+    $request->validate([
+        'course_code' => 'required|string|exists:courses,course_code',
+    ]);
+
+    // Cari course berdasarkan course_code yang diinputkan user
+    $course = Course::where('course_code', $request->course_code)->first();
+
+    if (!$course) {
+        throw ValidationException::withMessages([
+            'system_error' => ['Kode course tidak valid!'],
+        ]);
+    }
+
+    $user = auth()->user(); // Mengambil user yang sedang login
+
+    // Cek apakah user sudah terdaftar di course
+    $isEnrolled = $course->students()->where('user_id', $user->id)->exists();
+
+    if ($isEnrolled) {
+        throw ValidationException::withMessages([
+            'system_error' => ['Anda sudah terdaftar dalam course ini!'],
+        ]);
+    }
+
+    // Mulai transaksi untuk menambahkan user ke course
+    DB::beginTransaction();
+    try {
+        // Menambahkan user sebagai student ke course
+        $course->students()->attach($user->id);
+        DB::commit();
+
+        // Redirect ke halaman course students index setelah sukses
+        return redirect()->route('dashboard.learning.index');
+                        
+    } catch (\Exception $e) {
+        // Rollback jika terjadi error
+        DB::rollBack();
+        throw ValidationException::withMessages([
+            'system_error' => ['System error: ' . $e->getMessage()],
+        ]);
+    }
+}
+
+
     public function learning(Course $course, $question){
         $user = Auth::user();
 
@@ -71,25 +124,35 @@ class LearningController extends Controller
         ]);
     }
 
-    public function learning_rapport(Course $course){
+    public function learning_rapport(Course $course)
+{
+    $userId = Auth::id();
 
-        $userId = Auth::id();
-
-        $studentAnswers = StudentAnswer::with('question')
-        ->whereHas('question', function($query) use ($course) {     //whereHas = Filter pertanyaan
+    // Ambil jawaban siswa dengan relasi ke pertanyaan
+    $studentAnswers = StudentAnswer::with('question')
+        ->whereHas('question', function($query) use ($course) {
+            // Filter pertanyaan berdasarkan course
             $query->where('course_id', $course->id);
         })->where('user_id', $userId)->get();
 
-        $totalQuestions = CourseQuestion::where('course_id', $course->id)->count();
-        $correctAnswersCount = $studentAnswers->where('answer', 'correct')->count();
-        $passed = $correctAnswersCount == $totalQuestions;
+    
+    $totalQuestions = CourseQuestion::where('course_id', $course->id)->count();
+    $correctAnswersCount = $studentAnswers->where('answer', 'correct')->count();
 
-        return view('student.courses.learning_rapport', [
-            'passed' => $passed,
-            'course' => $course,
-            'studentAnswers' => $studentAnswers,
-            'totalQuestions' => $totalQuestions,
-            'correctAnswersCount' => $correctAnswersCount,
-        ]);
-    }
+    // Hitung nilai (skala 0-100)
+    $score = ($totalQuestions > 0) ? ($correctAnswersCount / $totalQuestions) * 100 : 0;
+
+    // Tentukan apakah lulus (dengan nilai >= 50 dianggap lulus)
+    $passed = $score >= 60;
+
+    return view('student.courses.learning_rapport', [
+        'passed' => $passed,
+        'course' => $course,
+        'studentAnswers' => $studentAnswers,
+        'totalQuestions' => $totalQuestions,
+        'correctAnswersCount' => $correctAnswersCount,
+        'score' => $score,
+    ]);
+}
+
 }

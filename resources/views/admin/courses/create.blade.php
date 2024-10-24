@@ -11,41 +11,12 @@
     <section id="content" class="flex">
         <x-sidebar />
         <div id="menu-content" class="flex flex-col w-full pb-[30px]">
-            <div class="nav flex justify-between p-5 border-b border-[#EEEEEE]">
-                {{-- Form Pencarian --}}
-                <form class="search flex items-center w-[400px] h-[52px] p-[10px_16px] rounded-full border border-[#EEEEEE]">
-                    <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Search by report, student, etc" name="search">
-                    <button type="submit" class="ml-[10px] w-8 h-8 flex items-center justify-center">
-                        <img src="{{asset('/images/icons/search.svg')}}" alt="icon">
-                    </button>
-                </form>
-                {{-- Form Pencarian --}}
-                <div class="flex items-center gap-[30px]">
-                    <div class="flex gap-[14px]">
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('/images/icons/receipt-text.svg')}}" alt="icon">
-                        </a>
-                        <a href="" class="w-[46px] h-[46px] flex shrink-0 items-center justify-center rounded-full border border-[#EEEEEE]">
-                            <img src="{{asset('/images/icons/notification.svg')}}" alt="icon">
-                        </a>
-                    </div>
-                    <div class="h-[46px] w-[1px] flex shrink-0 border border-[#EEEEEE]"></div>
-                    <div class="flex gap-3 items-center">
-                        <div class="flex flex-col text-right">
-                            <p class="font-semibold">{{ Auth::user()->name }}</p>
-                            <p class="text-sm text-[#7F8190]">{{ Auth::user()->email }}</p>
-                        </div>
-                        <div class="w-[46px] h-[46px]">
-                            <img src="{{asset('/images/photos/default-photo.svg')}}" alt="photo">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-topbar />
             <div class="flex flex-col gap-10 px-5 mt-5">
                 <div class="breadcrumb flex items-center gap-[30px]">
-                    <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Home</a>
+                    <a href="{{ url()->previous() }}" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Home</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
-                    <a href="index.html" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
+                    <a href="{{ url()->previous() }}" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold">Manage Courses</a>
                     <span class="text-[#7F8190] last:text-[#0A090B]">/</span>
                     <a href="#" class="text-[#7F8190] last:text-[#0A090B] last:font-semibold ">New Course</a>
                 </div>
@@ -174,8 +145,18 @@
                         </div>
                         <select id="access" class="pl-1 font-semibold focus:outline-none w-full text-[#0A090B] invalid:text-[#7F8190] invalid:font-normal appearance-none bg-[url('{{asset('/images/icons/arrow-down.svg')}}')] bg-no-repeat bg-right" name="access" required>
                             <option value="" disabled selected hidden>Choose the access type</option>
-                            <option value="Invitattion Only" class="font-semibold">Invitattion Only</option>
+                            <option value="Invitation Only" class="font-semibold">Invitation Only</option>
+                            <option value="Add Course Code" class="font-semibold">Add Course Code</option>
                         </select>
+                    </div>
+                </div>
+                <div id="courseCodeInput" class=" flex-col gap-[10px] hidden">
+                    <p class="font-semibold">Course Code</p>
+                    <div class="flex items-center w-[500px] h-[52px] p-[14px_16px] rounded-full border border-[#EEEEEE] transition-all duration-300 focus-within:border-2 focus-within:border-[#0A090B]">
+                        <div class="mr-[14px] w-6 h-6 flex items-center justify-center overflow-hidden">
+                            <img src="{{asset('/images/icons/note-favorite-outline.svg')}}" class="w-full h-full object-contain" alt="icon">
+                        </div>
+                        <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Write Course Code" name="course_code">
                     </div>
                 </div>
                 <label class="font-semibold flex items-center gap-[10px]"
@@ -234,6 +215,20 @@
             // Set the clicked element's aria-checked to "true"
             element.setAttribute('aria-checked', 'true');
         }
+    </script>
+
+    <script>
+        document.getElementById('access').addEventListener('change', function() {
+    const courseCodeInput = document.getElementById('courseCodeInput');
+    if (this.value === 'Add Course Code') {
+        // Tampilkan input Course Code
+        courseCodeInput.classList.remove('hidden');
+    } else {
+        // Sembunyikan input Course Code
+        courseCodeInput.classList.add('hidden');
+    }
+});
+
     </script>
     
 </body>
