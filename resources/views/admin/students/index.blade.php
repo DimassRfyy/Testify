@@ -38,10 +38,10 @@
                             </div>
                             <div class="flex gap-[10px] items-center">
                                 <div class="w-6 h-6 flex shrink-0">
-                                    <img src="{{asset('images/icons/profile-2user-outline.svg')}}" alt="icon">
+                                    <img src="{{ asset('images/icons/profile-2user-outline.svg') }}" alt="icon">
                                 </div>
-                                <p class="font-semibold">{{ count($students) }} students</p>
-                            </div>
+                                <p class="font-semibold">{{ $totalStudents }} students</p> <!-- Ubah dari count($students) menjadi $totalStudents -->
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,9 @@
                     @empty
                         <p>Belum ada siswa dikelas ini!</p>
                     @endforelse
-                   
+                    <div class="flex justify-end">
+                        {{ $students->links() }}
+                    </div>
                    
                 </div>
             </div>

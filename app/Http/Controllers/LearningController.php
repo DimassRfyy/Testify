@@ -125,34 +125,43 @@ class LearningController extends Controller
     }
 
     public function learning_rapport(Course $course)
-{
-    $userId = Auth::id();
-
-    // Ambil jawaban siswa dengan relasi ke pertanyaan
-    $studentAnswers = StudentAnswer::with('question')
-        ->whereHas('question', function($query) use ($course) {
-            // Filter pertanyaan berdasarkan course
-            $query->where('course_id', $course->id);
-        })->where('user_id', $userId)->get();
-
+    {
+        $userId = Auth::id();
     
-    $totalQuestions = CourseQuestion::where('course_id', $course->id)->count();
-    $correctAnswersCount = $studentAnswers->where('answer', 'correct')->count();
-
-    // Hitung nilai (skala 0-100)
-    $score = ($totalQuestions > 0) ? ($correctAnswersCount / $totalQuestions) * 100 : 0;
-
-    // Tentukan apakah lulus (dengan nilai >= 50 dianggap lulus)
-    $passed = $score >= 60;
-
-    return view('student.courses.learning_rapport', [
-        'passed' => $passed,
-        'course' => $course,
-        'studentAnswers' => $studentAnswers,
-        'totalQuestions' => $totalQuestions,
-        'correctAnswersCount' => $correctAnswersCount,
-        'score' => $score,
-    ]);
-}
+        // Query untuk menghitung total soal di course ini
+        $totalQuestions = CourseQuestion::where('course_id', $course->id)->count();
+    
+        // Query untuk menghitung total jawaban benar di seluruh soal (tidak dipaginasi)
+        $correctAnswersCount = StudentAnswer::where('user_id', $userId)
+            ->whereHas('question', function ($query) use ($course) {
+                $query->where('course_id', $course->id);
+            })
+            ->where('answer', 'correct')
+            ->count();
+    
+        // Query untuk mendapatkan jawaban dengan paginasi, hanya 5 per halaman
+        $studentAnswers = StudentAnswer::with(['question.correctAnswer', 'selectedAnswer'])
+            ->whereHas('question', function($query) use ($course) {
+                $query->where('course_id', $course->id);
+            })
+            ->where('user_id', $userId)
+            ->paginate(5);
+    
+        // Hitung nilai (skala 0-100)
+        $score = ($totalQuestions > 0) ? ($correctAnswersCount / $totalQuestions) * 100 : 0;
+    
+        $passed = $score >= 60;
+    
+        return view('student.courses.learning_rapport', [
+            'passed' => $passed,
+            'course' => $course,
+            'studentAnswers' => $studentAnswers,
+            'totalQuestions' => $totalQuestions,
+            'correctAnswersCount' => $correctAnswersCount,
+            'score' => $score,
+        ]);
+    }
+    
+    
 
 }

@@ -49,7 +49,7 @@
                     <a href="#" id="more-button" class="toggle-button w-[46px] h-[46px] flex shrink-0 rounded-full items-center justify-center border border-[#EEEEEE]">
                         <img src="{{asset('images/icons/more.svg')}}" alt="icon">
                     </a>
-                    <div class="dropdown-menu absolute right-0 top-[66px] w-[270px] flex flex-col gap-4 p-5 border border-[#EEEEEE] bg-white rounded-[18px] transition-all duration-300 shadow-[0_10px_16px_0_#0A090B0D]">
+                    <div class="dropdown-menu absolute right-0 top-[66px] w-[270px] flex flex-col gap-4 p-5 border border-[#EEEEEE] bg-white rounded-[18px] transition-all duration-300 shadow-[0_10px_16px_0_#0A090B0D] hidden"> <!-- Tambahkan kelas hidden -->
                         <a href="{{ route('dashboard.course.course_students.create', $course) }}" class="flex gap-[10px] items-center">
                             <div class="w-5 h-5">
                                 <img src="{{asset('images/icons/profile-2user-outline.svg')}}" alt="icon">
@@ -68,9 +68,9 @@
                             </div>
                             <span class="font-semibold text-sm">All Students</span>
                         </a>
-                        <form  method="POST" action="{{ route('dashboard.courses.destroy', $course) }}"  class="flex gap-[10px] items-center text-[#FD445E]">
-                                 @csrf
-                                @method('DELETE')
+                        <form method="POST" action="{{ route('dashboard.courses.destroy', $course) }}" class="flex gap-[10px] items-center text-[#FD445E]">
+                            @csrf
+                            @method('DELETE')
                             <div class="w-5 h-5">
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M17.5 4.98332C14.725 4.70832 11.9333 4.56665 9.15 4.56665C7.5 4.56665 5.85 4.64998 4.2 4.81665L2.5 4.98332" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -85,7 +85,7 @@
                             </button>
                         </form>
                     </div>
-                </div>
+                </div>                
             </div>
             <div id="course-test" class="mx-[70px] w-[870px] mt-[30px]">
                 <h2 class="font-bold text-2xl">Course Tests</h2>
@@ -98,29 +98,30 @@
                             <p class="font-bold text-xl">New Question</p>
                         </div>
                     </a>
-                    @forelse ($questions as $question)
-                        <div class="question-card w-full flex items-center justify-between p-4 border border-[#EEEEEE] rounded-[20px]">
-                            <div class="flex flex-col gap-[6px]">
-                                <p class="text-[#7F8190]">Question</p>
-                                <p class="font-bold text-xl">{{ $question->question }}</p>
-                            </div>
-                            <div class="flex items-center gap-[14px]">
-                                <a href="{{ route('dashboard.course_questions.edit', $question) }}" class="bg-[#0A090B] p-[14px_30px] rounded-full text-white font-semibold">Edit</a>
-                                <form method="POST" action="{{ route('dashboard.course_questions.destroy', $question) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="w-[52px] h-[52px] flex shrink-0 items-center justify-center rounded-full bg-[#FD445E]">
-                                        <img src="{{asset('images/icons/trash.svg')}}" alt="icon">
-                                    </button>
-                                </form>
-                            </div>
-                        </div>                        
-                    @empty
-                        <p>
-                            Kelas belum memiliki sebuah pertanyaan.
-                        </p>
-                    @endforelse
-
+                    @forelse ($questions as $index => $question)
+                    <div class="question-card w-full flex items-center justify-between p-4 border border-[#EEEEEE] rounded-[20px]">
+                        <div class="flex flex-col gap-[6px]">
+                            <p class="text-[#7F8190]">Question {{ $questions->firstItem() + $index }}</p>
+                            <p class="font-bold text-xl">{{ $question->question }}</p>
+                        </div>
+                        <div class="flex items-center gap-[14px]">
+                            <a href="{{ route('dashboard.course_questions.edit', $question) }}" class="bg-[#0A090B] p-[14px_30px] rounded-full text-white font-semibold">Edit</a>
+                            <form method="POST" action="{{ route('dashboard.course_questions.destroy', $question) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="w-[52px] h-[52px] flex shrink-0 items-center justify-center rounded-full bg-[#FD445E]">
+                                    <img src="{{asset('images/icons/trash.svg')}}" alt="icon">
+                                </button>
+                            </form>
+                        </div>
+                    </div>                        
+                @empty
+                    <p>Kelas belum memiliki sebuah pertanyaan.</p>
+                @endforelse                
+                
+                    <div class="flex justify-end">
+                        {{ $questions->links() }}
+                    </div>
 
                 </div>
             </div>
@@ -133,18 +134,19 @@
             const dropdownMenu = document.querySelector('.dropdown-menu');
         
             menuButton.addEventListener('click', function () {
-            dropdownMenu.classList.toggle('hidden');
+                dropdownMenu.classList.toggle('hidden');
             });
         
             // Close the dropdown menu when clicking outside of it
             document.addEventListener('click', function (event) {
-            const isClickInside = menuButton.contains(event.target) || dropdownMenu.contains(event.target);
-            if (!isClickInside) {
-                dropdownMenu.classList.add('hidden');
-            }
+                const isClickInside = menuButton.contains(event.target) || dropdownMenu.contains(event.target);
+                if (!isClickInside) {
+                    dropdownMenu.classList.add('hidden');
+                }
             });
         });
     </script>
+    
     
 </body>
 </html>

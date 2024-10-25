@@ -18,8 +18,13 @@ class CourseStudentController extends Controller
      */
     public function index(Course $course)
     {
-        // Ambil data siswa dan pertanyaan
-        $students = $course->students()->orderBy('id', 'DESC')->get();
+        // Ambil data seluruh siswa
+        $totalStudents = $course->students()->count();
+    
+        // Ambil data siswa untuk dipaginasikan
+        $students = $course->students()->orderBy('id', 'DESC')->paginate(5);
+        
+        // Ambil semua pertanyaan
         $questions = $course->questions()->orderBy('id', 'DESC')->get();
         $totalQuestion = $questions->count();
     
@@ -41,7 +46,6 @@ class CourseStudentController extends Controller
                 // Hitung skor dalam skala 0-100
                 $student->score = ($correctAnswerCount / $totalQuestion) * 100;
     
-                // Tentukan status berdasarkan skor
                 if ($student->score < 60) {
                     $student->status = "Belum Lulus";
                 } else {
@@ -54,8 +58,10 @@ class CourseStudentController extends Controller
             'course' => $course,
             'questions' => $questions,
             'students' => $students,
+            'totalStudents' => $totalStudents, 
         ]);
     }
+    
     
 
     /**

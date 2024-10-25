@@ -22,4 +22,9 @@ class CourseQuestion extends Model
      public function answers(){
         return $this->hasMany(CourseAnswer::class, 'course_question_id', 'id');
     }
+
+    public function correctAnswer()
+{
+    return $this->hasOne(CourseAnswer::class, 'course_question_id', 'id')->where('is_correct', true);
+}
 }

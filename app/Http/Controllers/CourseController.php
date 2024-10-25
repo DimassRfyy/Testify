@@ -88,7 +88,7 @@ class CourseController extends Controller
     {
         //
         $students = $course->students()->orderBy('id', 'DESC')->get();
-        $questions = $course->questions()->orderBy('id', 'DESC')->get();
+        $questions = $course->questions()->orderBy('id', 'ASC')->paginate(5);
         return view('admin.courses.manage', [
            'course' => $course, 
            'students' => $students,
