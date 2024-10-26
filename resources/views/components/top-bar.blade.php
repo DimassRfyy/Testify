@@ -1,7 +1,7 @@
 <div>
     <div class="nav flex justify-between p-5 border-b border-[#EEEEEE]">
         <form class="search flex items-center w-[400px] h-[52px] p-[10px_16px] rounded-full border border-[#EEEEEE]">
-            <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Search by report, student, etc" name="search">
+            <input type="text" class="font-semibold placeholder:text-[#7F8190] placeholder:font-normal w-full outline-none" placeholder="Search by course, category, etc" name="search">
             <button type="submit" class="ml-[10px] w-8 h-8 flex items-center justify-center">
                 <img src="{{asset('images/icons/search.svg')}}" alt="icon">
             </button>
@@ -24,7 +24,7 @@
                 <div class="w-[46px] h-[46px]">
                     <a href="/dashboard">
                         @if (Auth::user()->avatar)
-                            <img src="{{ Storage::url(Auth::user()->avatar) }}" class="rounded-full" alt="photo">
+                            <img src="{{ Storage::url(Auth::user()->avatar) }}" class="rounded-full object-contain" alt="photo">
                         @else
                             <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
                         @endif

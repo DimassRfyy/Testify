@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 @empty
-                <p>Belum ada kelas yang diberikan!</p>
+                <p>Kelas Tidak Ada!</p>
                 @endforelse
                 {{-- List Item --}}
 

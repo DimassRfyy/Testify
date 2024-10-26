@@ -12,43 +12,54 @@ use Illuminate\Validation\ValidationException;
 
 class LearningController extends Controller
 {
-    public function index(){
-
-        // Get data user
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+    
         $user = Auth::user();
-
-        // Get data Kelas
-        $my_courses = $user->courses()->with('category')->orderBy('id', 'DESC')->get();
-
+    
+        // Get data Kelas dengan fitur pencarian
+        $my_courses = $user->courses()
+        ->with('category')
+        ->when($search, function($query, $search) {
+            $query->where('name', 'like', "%{$search}%");
+        })
+        ->orderBy('id', 'DESC')
+        ->distinct() // Menjaga agar data tetap unik
+        ->get();
+       
         // nextQuestionId -> untuk kelanjutan pertanyaan jika tidak mau di ulang dari awal (Kendala Internet atau listrik mati)
         foreach ($my_courses as $course) {
             $totalQuestionsCount = $course->questions()->count();
-
+    
             $answerdQuestionCount = StudentAnswer::where('user_id', $user->id)
-            ->whereHas('question', function($query) use ($course){
-                $query->where('course_id', $course->id);
-            })->distinct()->count('course_question_id');
-
+                ->whereHas('question', function($query) use ($course) {
+                    $query->where('course_id', $course->id);
+                })
+                ->distinct()
+                ->count('course_question_id');
+    
             if ($answerdQuestionCount < $totalQuestionsCount) {
-                $firstUnasnweredQuestion = CourseQuestion::where('course_id', $course->id)
-                ->whereNotIn('id', function($query) use ($user){
-                    $query->select('course_question_id')->from('student_answers')
-                    ->where('user_id', $user->id);
-                })->orderBy('id', 'asc')->first();
-
-                $course->nextQuestionId = $firstUnasnweredQuestion ? $firstUnasnweredQuestion->id : null;
+                $firstUnansweredQuestion = CourseQuestion::where('course_id', $course->id)
+                    ->whereNotIn('id', function($query) use ($user) {
+                        $query->select('course_question_id')
+                              ->from('student_answers')
+                              ->where('user_id', $user->id);
+                    })
+                    ->orderBy('id', 'asc')
+                    ->first();
+    
+                $course->nextQuestionId = $firstUnansweredQuestion ? $firstUnansweredQuestion->id : null;
             } else {
                 $course->nextQuestionId = null;
             }
         }
-
-
-
+    
         return view('student.courses.index', [
             'my_courses' => $my_courses,
-
         ]);
     }
+    
 
     public function join_course () {
         return view('student.join_course');

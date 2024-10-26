@@ -13,9 +13,17 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $search = $request->input('search');
+    
+        $categories = Category::query()
+            ->when($search, function($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('slug', 'like', "%{$search}%"); 
+            })
+            ->get();
+    
         return view('admin.categories.index', compact('categories'));
     }
 

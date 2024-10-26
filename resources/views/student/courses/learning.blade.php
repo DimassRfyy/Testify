@@ -70,8 +70,6 @@
                     <input type="radio" name="answer_id" id="{{$answer->id}}" value="{{$answer->id}}" class="hidden">
                 </label>
                 @endforeach
-
-
             </div>
             <button type="submit" class="w-fit p-[14px_40px] bg-[#6436F1] rounded-full font-bold text-sm text-white transition-all duration-300 hover:shadow-[0_4px_15px_0_#6436F14D] text-center align-middle">Save & Next Question</button>
         </form>
