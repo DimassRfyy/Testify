@@ -58,10 +58,15 @@
                         <div class="flex gap-4 items-center">
                             <div class="w-[50px] h-[50px] flex shrink-0 rounded-full overflow-hidden">
                                 @if ($student->avatar)
-                                <img src="{{ Storage::url($student->avatar) }}" class="w-full h-full object-cover" alt="photo">
-                                    @else
-                                    <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
-                                @endif
+                                @php
+                                    $avatarUrl = Str::startsWith($student->avatar, 'http') 
+                                                 ? $student->avatar 
+                                                 : Storage::url($student->avatar);
+                                @endphp
+                                <img src="{{ $avatarUrl }}" class="w-full h-full object-cover" alt="photo">
+                            @else
+                                <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
+                            @endif                            
                             </div>
                             <div class="flex flex-col gap-[2px]">
                                 <p class="font-bold text-lg">{{ $student->name }}</p>
