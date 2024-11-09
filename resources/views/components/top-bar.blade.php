@@ -24,10 +24,15 @@
                 <div class="w-[46px] h-[46px]">
                     <a href="/dashboard">
                         @if (Auth::user()->avatar)
-                            <img src="{{ Storage::url(Auth::user()->avatar) }}" class="rounded-full object-contain" alt="photo">
-                        @else
-                            <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
-                        @endif
+                        @php
+                            $avatarUrl = Str::startsWith(Auth::user()->avatar, 'http') 
+                                         ? Auth::user()->avatar 
+                                         : Storage::url(Auth::user()->avatar);
+                        @endphp
+                        <img src="{{ $avatarUrl }}" class="rounded-full object-contain" alt="photo">
+                    @else
+                        <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
+                    @endif                    
                     </a>
                 </div>                        
             </div>

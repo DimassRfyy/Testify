@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
@@ -12,6 +13,9 @@ use App\Http\Controllers\StudentAnswerController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/auth/{provider}/redirect',[SocialiteController::class,'redirect'])->name('socialiteRedirect');
+Route::get('/auth/{provider}/callback',[SocialiteController::class,'callback'])->name('socialiteCallback');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
