@@ -63,7 +63,7 @@
                                                  ? $student->avatar 
                                                  : Storage::url($student->avatar);
                                 @endphp
-                                <img src="{{ $avatarUrl }}" class="w-full h-full object-cover" alt="photo">
+                                <img src="{{ $avatarUrl }}" class="w-full h-full object-cover" alt="socialite">
                             @else
                                 <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
                             @endif                            

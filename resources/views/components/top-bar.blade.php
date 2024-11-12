@@ -29,7 +29,9 @@
                                          ? Auth::user()->avatar 
                                          : Storage::url(Auth::user()->avatar);
                         @endphp
-                        <img src="{{ $avatarUrl }}" class="rounded-full object-contain" alt="photo">
+                       <div class="w-[50px] h-[50px] flex shrink-0 rounded-full overflow-hidden">
+                        <img src="{{ $avatarUrl }}" class="object-cover w-full h-full" alt="photo">
+                    </div>                    
                     @else
                         <img src="{{ asset('/images/photos/default-photo.svg') }}" class="rounded-full" alt="photo">
                     @endif                    
